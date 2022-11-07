@@ -3,11 +3,11 @@
   "name": "Rooted Toon",
   "config_flow": true,
   "documentation": "https://www.home-assistant.io/integrations/rootedtoon",
-  "requirements": [],
+  "dependencies": [],
   "ssdp": [],
   "zeroconf": [],
   "homekit": {},
-  "dependencies": [
+  "requirements": [
     "git+https://github.com/wesley-vos/python-rootedtoonapi@dev#rootedtoonapi==0.1.1"
   ],
   "codeowners": ["@wesley-vos"],
