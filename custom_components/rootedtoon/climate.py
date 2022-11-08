@@ -72,7 +72,7 @@ class ToonThermostatDevice(ToonDisplayDeviceEntity, ClimateEntity):
     @property
     def hvac_action(self) -> HVACAction:
         """Return the current running hvac operation."""
-        if self.coordinator.data.thermostat.heating or self.coordinator.data.thermostat.preheating:
+        if self.coordinator.data.thermostat.heating or self.coordinator.data.thermostat.pre_heating:
             return HVACAction.HEATING
         return HVACAction.IDLE
 
