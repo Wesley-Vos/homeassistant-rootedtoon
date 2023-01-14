@@ -2,7 +2,7 @@
 import voluptuous as vol
 
 from homeassistant.config_entries import SOURCE_IMPORT, ConfigEntry
-from homeassistant.const import Platform
+from homeassistant.const import CONF_NAME, Platform
 from homeassistant.core import CoreState, HomeAssistant
 from homeassistant.helpers import config_validation as cv, device_registry as dr
 from homeassistant.helpers.typing import ConfigType
@@ -11,23 +11,11 @@ from .const import DOMAIN
 from .coordinator import RootedToonDataUpdateCoordinator
 
 PLATFORMS = [
-    # Platform.BINARY_SENSOR,
+    Platform.BINARY_SENSOR,
     Platform.CLIMATE,
-    # Platform.SENSOR,
+    Platform.SENSOR,
     # Platform.SWITCH,
 ]
-
-
-# async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
-#     """Set up the Toon components."""
-#     if DOMAIN not in config:
-#         return True
-
-#     hass.async_create_task(
-#         hass.config_entries.flow.async_init(DOMAIN, context={"source": SOURCE_IMPORT})
-#     )
-
-#     return True
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
@@ -39,21 +27,36 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     hass.data.setdefault(DOMAIN, {})
     hass.data[DOMAIN][entry.entry_id] = coordinator
 
-    # Register device for the Meter Adapter, since it will have no entities.
-    # device_registry = dr.async_get(hass)
-    # device_registry.async_get_or_create(
-    #     config_entry_id=entry.entry_id,
-    #     identifiers={
-    #         (
-    #             DOMAIN,
-    #             coordinator.data.agreement.agreement_id,
-    #             "meter_adapter",
-    #         )  # type: ignore[arg-type]
-    #     },
-    #     manufacturer="Eneco",
-    #     name="Meter Adapter",
-    #     via_device=(DOMAIN, coordinator.data.agreement.agreement_id),
-    # )
+    conf_name = entry.data.get(CONF_NAME)
+    device_registry = dr.async_get(hass)
+    device_registry.async_get_or_create(
+        config_entry_id=entry.entry_id,
+        identifiers={
+            (
+                DOMAIN,
+                conf_name,
+            )  # type: ignore[arg-type]
+        },
+        manufacturer="Eneco",
+        name=conf_name,
+        model="Toon",
+    )
+
+    if coordinator.data.has_meter_adapter:
+        # Register device for the Meter Adapter, since it will have no entities.
+        device_registry.async_get_or_create(
+            config_entry_id=entry.entry_id,
+            identifiers={
+                (
+                    DOMAIN,
+                    conf_name,
+                    "p1_meter",
+                )  # type: ignore[arg-type]
+            },
+            manufacturer="Eneco",
+            name="P1 Meter",
+            via_device=(DOMAIN, conf_name),
+        )
 
     # Spin up the platforms
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)

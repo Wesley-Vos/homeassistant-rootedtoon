@@ -11,7 +11,16 @@ from homeassistant.const import CONF_HOST, CONF_NAME, CONF_PORT, CONF_SCAN_INTER
 from homeassistant.data_entry_flow import FlowResult
 from homeassistant.helpers import config_validation as cv
 
-from .const import DEFAULT_NAME, DEFAULT_PORT, DEFAULT_SCAN_INTERVAL, DOMAIN
+from .const import (
+    DEFAULT_NAME,
+    DEFAULT_PORT,
+    DEFAULT_SCAN_INTERVAL,
+    CONF_P1_METER_PREFIX,
+    CONF_P1_METER_SUFFIX,
+    CONF_THERMOSTAT_PREFIX,
+    CONF_THERMOSTAT_SUFFIX,
+    DOMAIN,
+)
 
 # Validation of the user's configuration
 CONFIG_SCHEMA = vol.Schema(
@@ -20,6 +29,10 @@ CONFIG_SCHEMA = vol.Schema(
         vol.Required(CONF_HOST): str,
         vol.Optional(CONF_PORT, default=DEFAULT_PORT): int,
         vol.Optional(CONF_SCAN_INTERVAL, default=DEFAULT_SCAN_INTERVAL): int,
+        vol.Optional(CONF_P1_METER_PREFIX, default=""): str,
+        vol.Optional(CONF_P1_METER_SUFFIX, default=""): str,
+        vol.Optional(CONF_THERMOSTAT_PREFIX, default=""): str,
+        vol.Optional(CONF_THERMOSTAT_SUFFIX, default=""): str,
     }
 )
 

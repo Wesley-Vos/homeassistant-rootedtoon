@@ -1,6 +1,7 @@
 """Support for Toon thermostat."""
 from __future__ import annotations
 
+from homeassistant.helpers.entity import DeviceInfo
 from typing import Any
 
 from rootedtoonapi import (
@@ -29,7 +30,13 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from . import RootedToonDataUpdateCoordinator
-from .const import DEFAULT_MAX_TEMP, DEFAULT_MIN_TEMP, DOMAIN
+from .const import (
+    DEFAULT_MAX_TEMP,
+    DEFAULT_MIN_TEMP,
+    DOMAIN,
+    CONF_THERMOSTAT_PREFIX,
+    CONF_THERMOSTAT_SUFFIX,
+)
 from .helpers import toon_exception_handler
 from .models import ToonDisplayDeviceEntity
 
@@ -65,14 +72,18 @@ class ToonThermostatDevice(ToonDisplayDeviceEntity, ClimateEntity):
             PRESET_HOME,
             PRESET_SLEEP,
         ]
-        self._attr_name = f"{config.get(CONF_NAME)} Thermostat"
+        name = f"{config.get(CONF_THERMOSTAT_PREFIX)} thermostat {config.get(CONF_THERMOSTAT_SUFFIX)}".strip()
+        self._attr_name = name[0].upper() + name[1:]
         self._attr_unique_id = f"{DOMAIN}_{config.get(CONF_NAME)}_climate"
-        print(self._attr_unique_id)
+        self.config = config
 
     @property
     def hvac_action(self) -> HVACAction:
         """Return the current running hvac operation."""
-        if self.coordinator.data.thermostat.heating or self.coordinator.data.thermostat.pre_heating:
+        if (
+            self.coordinator.data.thermostat.heating
+            or self.coordinator.data.thermostat.pre_heating
+        ):
             return HVACAction.HEATING
         return HVACAction.IDLE
 
@@ -135,3 +146,14 @@ class ToonThermostatDevice(ToonDisplayDeviceEntity, ClimateEntity):
         """Set new target hvac mode."""
         mapping = {HVACMode.AUTO: PROGRAM_STATE_ON, HVACMode.HEAT: PROGRAM_STATE_OFF}
         await self.coordinator.toon.set_hvac_mode(mapping[hvac_mode])
+
+    @property
+    def device_info(self) -> DeviceInfo:
+        """Return the device info."""
+        return DeviceInfo(
+            identifiers={(DOMAIN, self.unique_id)},
+            name=self.name,
+            manufacturer="Eneco",
+            sw_version="5",
+            via_device=(DOMAIN, self.config.get(CONF_NAME)),
+        )

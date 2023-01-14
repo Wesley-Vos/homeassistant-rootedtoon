@@ -5,7 +5,7 @@ from datetime import timedelta
 import logging
 import secrets
 
-from rootedtoonapi import Status, Toon, ToonError
+from rootedtoonapi import Devices, Toon, ToonError
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_HOST, CONF_PORT
@@ -18,17 +18,17 @@ from .const import DEFAULT_SCAN_INTERVAL, DOMAIN
 _LOGGER = logging.getLogger(__name__)
 
 
-class RootedToonDataUpdateCoordinator(DataUpdateCoordinator[Status]):
+class RootedToonDataUpdateCoordinator(DataUpdateCoordinator[Devices]):
     """Class to manage fetching Toon data from single endpoint."""
 
     def __init__(self, hass: HomeAssistant, *, entry: ConfigEntry) -> None:
         """Initialize global Toon data updater."""
         self.entry = entry
-        config = entry.data
+        self.config = entry.data
 
         self.toon = Toon(
-            host=config[CONF_HOST],
-            port=config[CONF_PORT],
+            host=self.config[CONF_HOST],
+            port=self.config[CONF_PORT],
             session=async_get_clientsession(hass),
         )
 
@@ -39,9 +39,9 @@ class RootedToonDataUpdateCoordinator(DataUpdateCoordinator[Status]):
             update_interval=timedelta(seconds=DEFAULT_SCAN_INTERVAL),
         )
 
-    async def _async_update_data(self) -> Status:
+    async def _async_update_data(self) -> Devices:
         """Fetch data from Toon."""
         try:
-            return await self.toon.update_climate()
+            return await self.toon.update_both()
         except ToonError as error:
             raise UpdateFailed(f"Invalid response from API: {error}") from error
