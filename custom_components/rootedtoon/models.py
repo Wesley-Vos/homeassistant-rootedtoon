@@ -7,8 +7,19 @@ from homeassistant.const import CONF_NAME
 from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
-from .const import DOMAIN
+from .const import (
+    CONF_BOILER_PREFIX,
+    CONF_BOILER_SUFFIX,
+    CONF_P1_METER_PREFIX,
+    CONF_P1_METER_SUFFIX,
+    DEVICE_BOILER_MODULE,
+    DEVICE_ELECTRICITY,
+    DEVICE_P1_METER,
+    DOMAIN,
+    ENECO,
+)
 from .coordinator import RootedToonDataUpdateCoordinator
+from .util import upper_first
 
 
 class ToonEntity(CoordinatorEntity[RootedToonDataUpdateCoordinator]):
@@ -25,11 +36,14 @@ class ToonElectricityMeterDeviceEntity(ToonEntity):
     @property
     def device_info(self) -> DeviceInfo:
         """Return device information about this entity."""
-        conf_name = self.coordinator.config.get(CONF_NAME)
+        config = self.coordinator.config
+        conf_name = config.get(CONF_NAME)
+        name = f"{config.get(CONF_P1_METER_PREFIX)} electricity meter {config.get(CONF_P1_METER_SUFFIX)}"
+
         return DeviceInfo(
-            name="Electricity Meter",
-            identifiers={(DOMAIN, conf_name, "electricity")},  # type: ignore[arg-type]
-            via_device=(DOMAIN, conf_name, "p1_meter"),  # type: ignore[typeddict-item]
+            name=upper_first(name),
+            identifiers={(DOMAIN, conf_name, DEVICE_ELECTRICITY)},  # type: ignore[arg-type]
+            via_device=(DOMAIN, conf_name, DEVICE_P1_METER),  # type: ignore[typeddict-item]
         )
 
 
@@ -39,38 +53,15 @@ class ToonGasMeterDeviceEntity(ToonEntity):
     @property
     def device_info(self) -> DeviceInfo:
         """Return device information about this entity."""
-        conf_name = self.coordinator.config.get(CONF_NAME)
+        config = self.coordinator.config
+        conf_name = config.get(CONF_NAME)
+        name = f"{config.get(CONF_P1_METER_PREFIX)} gas meter {config.get(CONF_P1_METER_SUFFIX)}"
+
         return DeviceInfo(
-            name="Gas Meter",
+            name=upper_first(name),
             identifiers={(DOMAIN, conf_name, "gas")},  # type: ignore[arg-type]
-            via_device=(DOMAIN, conf_name, "electricity"),  # type: ignore[typeddict-item]
+            via_device=(DOMAIN, conf_name, DEVICE_ELECTRICITY),  # type: ignore[typeddict-item]
         )
-
-
-# class ToonWaterMeterDeviceEntity(ToonEntity):
-#     """Defines a Water Meter device entity."""
-
-#     @property
-#     def device_info(self) -> DeviceInfo:
-#         """Return device information about this entity."""
-#         return DeviceInfo(
-#             name="Water Meter",
-#             identifiers={(DOMAIN, "toon", "water")},  # type: ignore[arg-type]
-#             via_device=(DOMAIN, "toon", "electricity"),  # type: ignore[typeddict-item]
-#         )
-
-
-# class ToonSolarDeviceEntity(ToonEntity):
-#     """Defines a Solar Device device entity."""
-
-#     @property
-#     def device_info(self) -> DeviceInfo:
-#         """Return device information about this entity."""
-#         return DeviceInfo(
-#             name="Solar Panels",
-#             identifiers={(DOMAIN, "toon", "solar")},  # type: ignore[arg-type]
-#             via_device=(DOMAIN, "toon", "meter_adapter"),  # type: ignore[typeddict-item]
-#         )
 
 
 class ToonBoilerModuleDeviceEntity(ToonEntity):
@@ -79,11 +70,14 @@ class ToonBoilerModuleDeviceEntity(ToonEntity):
     @property
     def device_info(self) -> DeviceInfo:
         """Return device information about this entity."""
-        conf_name = self.coordinator.config.get(CONF_NAME)
+        config = self.coordinator.config
+        conf_name = config.get(CONF_NAME)
+        name = f"{config.get(CONF_BOILER_PREFIX)} boiler module {config.get(CONF_BOILER_SUFFIX)}"
+
         return DeviceInfo(
-            name="Boiler Module",
-            manufacturer="Eneco",
-            identifiers={(DOMAIN, conf_name, "boiler_module")},  # type: ignore[arg-type]
+            name=upper_first(name),
+            manufacturer=ENECO,
+            identifiers={(DOMAIN, conf_name, DEVICE_BOILER_MODULE)},  # type: ignore[arg-type]
             via_device=(DOMAIN, conf_name),
         )
 
@@ -93,12 +87,17 @@ class ToonBoilerDeviceEntity(ToonEntity):
 
     @property
     def device_info(self) -> DeviceInfo:
-        conf_name = self.coordinator.config.get(CONF_NAME)
         """Return device information about this entity."""
+
+        config = self.coordinator.config
+        conf_name = config.get(CONF_NAME)
+        name = (
+            f"{config.get(CONF_BOILER_PREFIX)} boiler {config.get(CONF_BOILER_SUFFIX)}"
+        )
         return DeviceInfo(
-            name="Boiler",
+            name=upper_first(name),
             identifiers={(DOMAIN, conf_name, "boiler")},  # type: ignore[arg-type]
-            via_device=(DOMAIN, conf_name, "boiler_module"),  # type: ignore[typeddict-item]
+            via_device=(DOMAIN, conf_name, DEVICE_BOILER_MODULE),  # type: ignore[typeddict-item]
         )
 
 

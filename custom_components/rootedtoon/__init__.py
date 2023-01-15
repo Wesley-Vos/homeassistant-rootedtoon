@@ -7,7 +7,7 @@ from homeassistant.core import CoreState, HomeAssistant
 from homeassistant.helpers import config_validation as cv, device_registry as dr
 from homeassistant.helpers.typing import ConfigType
 
-from .const import DOMAIN
+from .const import DEVICE_P1_METER, DOMAIN, ENECO
 from .coordinator import RootedToonDataUpdateCoordinator
 
 PLATFORMS = [
@@ -37,7 +37,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
                 conf_name,
             )  # type: ignore[arg-type]
         },
-        manufacturer="Eneco",
+        manufacturer=ENECO,
         name=conf_name,
         model="Toon",
     )
@@ -50,10 +50,10 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
                 (
                     DOMAIN,
                     conf_name,
-                    "p1_meter",
+                    DEVICE_P1_METER,
                 )  # type: ignore[arg-type]
             },
-            manufacturer="Eneco",
+            manufacturer=ENECO,
             name="P1 Meter",
             via_device=(DOMAIN, conf_name),
         )

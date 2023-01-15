@@ -5,7 +5,14 @@
                 "data": {
                     "host": "Host",
                     "name": "Name",
-                    "port": "Port"
+                    "port": "Port",
+                    "scan_interval": "Scan Interval",
+                    "boiler_prefix": "Boiler sensor prefix",
+                    "boiler_suffix": "Boiler sensor suffix",
+                    "p1_meter_prefix": "P1 Meter sensor prefix",
+                    "p1_meter_suffix": "P1 Meter sensor suffix",
+                    "thermostat_prefix": "Thermostat climate prefix",
+                    "thermostat_suffix": "Thermostat climate suffix"
                 }
             }
         }

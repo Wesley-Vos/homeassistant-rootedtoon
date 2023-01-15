@@ -31,14 +31,16 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from . import RootedToonDataUpdateCoordinator
 from .const import (
+    CONF_THERMOSTAT_PREFIX,
+    CONF_THERMOSTAT_SUFFIX,
     DEFAULT_MAX_TEMP,
     DEFAULT_MIN_TEMP,
     DOMAIN,
-    CONF_THERMOSTAT_PREFIX,
-    CONF_THERMOSTAT_SUFFIX,
+    ENECO,
 )
 from .helpers import toon_exception_handler
 from .models import ToonDisplayDeviceEntity
+from .util import upper_first
 
 
 async def async_setup_entry(
@@ -73,7 +75,7 @@ class ToonThermostatDevice(ToonDisplayDeviceEntity, ClimateEntity):
             PRESET_SLEEP,
         ]
         name = f"{config.get(CONF_THERMOSTAT_PREFIX)} thermostat {config.get(CONF_THERMOSTAT_SUFFIX)}".strip()
-        self._attr_name = name[0].upper() + name[1:]
+        self._attr_name = upper_first(name)
         self._attr_unique_id = f"{DOMAIN}_{config.get(CONF_NAME)}_climate"
         self.config = config
 
@@ -153,7 +155,6 @@ class ToonThermostatDevice(ToonDisplayDeviceEntity, ClimateEntity):
         return DeviceInfo(
             identifiers={(DOMAIN, self.unique_id)},
             name=self.name,
-            manufacturer="Eneco",
-            sw_version="5",
+            manufacturer=ENECO,
             via_device=(DOMAIN, self.config.get(CONF_NAME)),
         )

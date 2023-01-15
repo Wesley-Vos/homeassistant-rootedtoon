@@ -42,6 +42,6 @@ class RootedToonDataUpdateCoordinator(DataUpdateCoordinator[Devices]):
     async def _async_update_data(self) -> Devices:
         """Fetch data from Toon."""
         try:
-            return await self.toon.update_both()
+            return await self.toon.update()
         except ToonError as error:
             raise UpdateFailed(f"Invalid response from API: {error}") from error

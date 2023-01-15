@@ -15,20 +15,19 @@ from homeassistant.const import (
     CONF_NAME,
     ENERGY_KILO_WATT_HOUR,
     PERCENTAGE,
+    PRESSURE_BAR,
     POWER_WATT,
-    TEMP_CELSIUS,
     UnitOfVolume,
 )
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .const import (
-    CURRENCY_EUR,
+    CONF_BOILER_PREFIX,
+    CONF_BOILER_SUFFIX,
     CONF_P1_METER_PREFIX,
     CONF_P1_METER_SUFFIX,
     DOMAIN,
-    VOLUME_CM3,
-    VOLUME_LMIN,
 )
 from .coordinator import RootedToonDataUpdateCoordinator
 from .models import (
@@ -40,6 +39,7 @@ from .models import (
     # ToonSolarDeviceEntity,
     # ToonWaterMeterDeviceEntity,
 )
+from .util import upper_first
 
 
 async def async_setup_entry(
@@ -72,9 +72,18 @@ async def async_setup_entry(
         entities.extend(
             [
                 description.cls(
-                    coordinator, entry, description, coordinator.data.thermostat
+                    coordinator, entry, description, coordinator.data.boiler
                 )
                 for description in BOILER_SENSOR_ENTITIES
+                if coordinator.data.boiler.available()
+            ]
+        )
+        entities.extend(
+            [
+                description.cls(
+                    coordinator, entry, description, coordinator.data.thermostat
+                )
+                for description in THERMOSTAT_SENSOR_ENTITIES
             ]
         )
 
@@ -101,8 +110,6 @@ class ToonSensor(ToonEntity, SensorEntity):
         self._attr_unique_id = (
             f"{DOMAIN}_{entry.data.get(CONF_NAME)}_sensor_{description.key}"
         )
-        name = f"{entry.data.get(CONF_P1_METER_PREFIX) } {description.name.lower()} { entry.data.get(CONF_P1_METER_SUFFIX)}".strip()
-        self._attr_name = name[0].upper() + name[1:]
 
     @property
     def native_value(self) -> str | None:
@@ -110,16 +117,46 @@ class ToonSensor(ToonEntity, SensorEntity):
         return getattr(self.device, self.entity_description.key)
 
 
-class ToonElectricityMeterDeviceSensor(ToonSensor, ToonElectricityMeterDeviceEntity):
+class ToonP1MeterSensor(ToonSensor):
+    """Defines a P1 Meter sensor."""
+
+    def __init__(
+        self,
+        coordinator: RootedToonDataUpdateCoordinator,
+        entry: ConfigEntry,
+        description: ToonSensorEntityDescription,
+        device: Any,
+    ) -> None:
+        super().__init__(coordinator, entry, description, device)
+
+        name = f"{entry.data.get(CONF_P1_METER_PREFIX) } {description.name.lower()} { entry.data.get(CONF_P1_METER_SUFFIX)}".strip()
+        self._attr_name = upper_first(name)
+
+
+class ToonElectricityMeterDeviceSensor(
+    ToonP1MeterSensor, ToonElectricityMeterDeviceEntity
+):
     """Defines a Electricity Meter sensor."""
 
 
-class ToonGasMeterDeviceSensor(ToonSensor, ToonGasMeterDeviceEntity):
+class ToonGasMeterDeviceSensor(ToonP1MeterSensor, ToonGasMeterDeviceEntity):
     """Defines a Gas Meter sensor."""
 
 
 class ToonBoilerDeviceSensor(ToonSensor, ToonBoilerDeviceEntity):
     """Defines a Boiler sensor."""
+
+    def __init__(
+        self,
+        coordinator: RootedToonDataUpdateCoordinator,
+        entry: ConfigEntry,
+        description: ToonSensorEntityDescription,
+        device: Any,
+    ) -> None:
+        super().__init__(coordinator, entry, description, device)
+
+        name = f"{entry.data.get(CONF_BOILER_PREFIX) } {description.name.lower()} { entry.data.get(CONF_BOILER_SUFFIX)}".strip()
+        self._attr_name = upper_first(name)
 
 
 @dataclass
@@ -220,12 +257,22 @@ ELECTRICITY_SENSOR_ENTITIES: tuple[ToonSensorEntityDescription, ...] = (
     ),
 )
 
-BOILER_SENSOR_ENTITIES: tuple[ToonSensorEntityDescription, ...] = (
+THERMOSTAT_SENSOR_ENTITIES: tuple[ToonSensorEntityDescription, ...] = (
     ToonSensorEntityDescription(
         key="current_modulation_level",
-        name="Boiler modulation Level",
+        name="Boiler modulation level",
         native_unit_of_measurement=PERCENTAGE,
         icon="mdi:percent",
+        state_class=SensorStateClass.MEASUREMENT,
+        cls=ToonBoilerDeviceSensor,
+    ),
+)
+BOILER_SENSOR_ENTITIES: tuple[ToonSensorEntityDescription, ...] = (
+    ToonSensorEntityDescription(
+        key="pressure",
+        name="Boiler pressure",
+        native_unit_of_measurement=PRESSURE_BAR,
+        device_class=SensorDeviceClass.PRESSURE,
         state_class=SensorStateClass.MEASUREMENT,
         cls=ToonBoilerDeviceSensor,
     ),

@@ -13,7 +13,13 @@ from homeassistant.core import HomeAssistant
 from homeassistant.const import CONF_NAME
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from .const import DOMAIN
+from .const import (
+    CONF_BOILER_PREFIX,
+    CONF_BOILER_SUFFIX,
+    DOMAIN,
+    CONF_THERMOSTAT_PREFIX,
+    CONF_THERMOSTAT_SUFFIX,
+)
 from .coordinator import RootedToonDataUpdateCoordinator
 from .models import (
     ToonBoilerDeviceEntity,
@@ -21,6 +27,7 @@ from .models import (
     ToonDisplayDeviceEntity,
     ToonEntity,
 )
+from .util import upper_first
 from typing import Any
 
 
@@ -67,9 +74,6 @@ class ToonBinarySensor(ToonEntity, BinarySensorEntity):
         self._attr_unique_id = (
             f"{DOMAIN}_{entry.data.get(CONF_NAME)}_binary_sensor_{description.key}"
         )
-        # name = f"{entry.data.get(CONF_P1_METER_PREFIX) } {description.name.lower()} { entry.data.get(CONF_P1_METER_SUFFIX)}".strip()
-        name = description.name
-        self._attr_name = name[0].upper() + name[1:]
 
     @property
     def is_on(self) -> bool | None:
@@ -85,13 +89,49 @@ class ToonBinarySensor(ToonEntity, BinarySensorEntity):
 class ToonBoilerBinarySensor(ToonBinarySensor, ToonBoilerDeviceEntity):
     """Defines a Boiler binary sensor."""
 
+    def __init__(
+        self,
+        coordinator: RootedToonDataUpdateCoordinator,
+        entry: ConfigEntry,
+        description: ToonBinarySensorEntityDescription,
+        device: Any,
+    ) -> None:
+        """Initialize the Toon sensor."""
+        super().__init__(coordinator, entry, description, device)
+        name = f"{entry.data.get(CONF_BOILER_PREFIX) } {description.name.lower()} { entry.data.get(CONF_BOILER_SUFFIX)}".strip()
+        self._attr_name = upper_first(name)
+
 
 class ToonDisplayBinarySensor(ToonBinarySensor, ToonDisplayDeviceEntity):
     """Defines a Toon Display binary sensor."""
 
+    def __init__(
+        self,
+        coordinator: RootedToonDataUpdateCoordinator,
+        entry: ConfigEntry,
+        description: ToonBinarySensorEntityDescription,
+        device: Any,
+    ) -> None:
+        """Initialize the Toon sensor."""
+        super().__init__(coordinator, entry, description, device)
+        name = f"{entry.data.get(CONF_THERMOSTAT_PREFIX) } {description.name.lower()} { entry.data.get(CONF_THERMOSTAT_SUFFIX)}".strip()
+        self._attr_name = upper_first(name)
+
 
 class ToonBoilerModuleBinarySensor(ToonBinarySensor, ToonBoilerModuleDeviceEntity):
     """Defines a Boiler module binary sensor."""
+
+    def __init__(
+        self,
+        coordinator: RootedToonDataUpdateCoordinator,
+        entry: ConfigEntry,
+        description: ToonBinarySensorEntityDescription,
+        device: Any,
+    ) -> None:
+        """Initialize the Toon sensor."""
+        super().__init__(coordinator, entry, description, device)
+        name = f"{entry.data.get(CONF_BOILER_PREFIX) } {description.name.lower()} { entry.data.get(CONF_BOILER_SUFFIX)}".strip()
+        self._attr_name = upper_first(name)
 
 
 @dataclass
