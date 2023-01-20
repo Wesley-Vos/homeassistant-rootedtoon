@@ -17,6 +17,7 @@ from homeassistant.const import (
     PERCENTAGE,
     PRESSURE_BAR,
     POWER_WATT,
+    UnitOfTemperature,
     UnitOfVolume,
 )
 from homeassistant.core import HomeAssistant
@@ -263,6 +264,14 @@ THERMOSTAT_SENSOR_ENTITIES: tuple[ToonSensorEntityDescription, ...] = (
         name="Boiler modulation level",
         native_unit_of_measurement=PERCENTAGE,
         icon="mdi:percent",
+        state_class=SensorStateClass.MEASUREMENT,
+        cls=ToonBoilerDeviceSensor,
+    ),
+    ToonSensorEntityDescription(
+        key="current_display_temperature",
+        name="Toon Temperature",
+        native_unit_of_measurement=UnitOfTemperature.CELSIUS,
+        device_class=SensorDeviceClass.TEMPERATURE,
         state_class=SensorStateClass.MEASUREMENT,
         cls=ToonBoilerDeviceSensor,
     ),
