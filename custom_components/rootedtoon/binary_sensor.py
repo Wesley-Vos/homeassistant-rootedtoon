@@ -35,18 +35,16 @@ async def async_setup_entry(
     hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback
 ) -> None:
     """Set up a Toon binary sensor based on a config entry."""
-    coordinator = hass.data[DOMAIN][entry.entry_id]
+    data = hass.data[DOMAIN][entry.entry_id]
 
     entities = [
-        description.cls(coordinator, entry, description, coordinator.data.thermostat)
+        description.cls(coordinator, entry, description, data.toon.thermostat)
         for description in BINARY_SENSOR_ENTITIES
     ]
-    if coordinator.data.thermostat.have_opentherm_boiler:
+    if data.toon.thermostat.have_opentherm_boiler:
         entities.extend(
             [
-                description.cls(
-                    coordinator, entry, description, coordinator.data.thermostat
-                )
+                description.cls(coordinator, entry, description, data.toon.thermostat)
                 for description in BINARY_SENSOR_ENTITIES_BOILER
             ]
         )

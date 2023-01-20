@@ -47,7 +47,7 @@ async def async_setup_entry(
     hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback
 ) -> None:
     """Set up a Toon binary sensors based on a config entry."""
-    coordinator = hass.data[DOMAIN][entry.entry_id]
+    data = hass.data[DOMAIN][entry.entry_id]
     async_add_entities([ToonThermostatDevice(coordinator, entry.data)])
 
 
@@ -82,17 +82,14 @@ class ToonThermostatDevice(ToonDisplayDeviceEntity, ClimateEntity):
     @property
     def hvac_action(self) -> HVACAction:
         """Return the current running hvac operation."""
-        if (
-            self.coordinator.data.thermostat.heating
-            or self.coordinator.data.thermostat.pre_heating
-        ):
+        if self.data.toon.thermostat.heating or self.data.toon.thermostat.pre_heating:
             return HVACAction.HEATING
         return HVACAction.IDLE
 
     @property
     def hvac_mode(self) -> HVACMode:
         """Return the current HVAC Mode"""
-        if self.coordinator.data.thermostat.program:
+        if self.data.toon.thermostat.program:
             return HVACMode.AUTO
         return HVACMode.HEAT
 
@@ -105,24 +102,24 @@ class ToonThermostatDevice(ToonDisplayDeviceEntity, ClimateEntity):
             ACTIVE_STATE_HOME: PRESET_HOME,
             ACTIVE_STATE_SLEEP: PRESET_SLEEP,
         }
-        return mapping.get(self.coordinator.data.thermostat.active_state)
+        return mapping.get(self.data.toon.thermostat.active_state)
 
     @property
     def current_temperature(self) -> float | None:
         """Return the current temperature."""
-        return self.coordinator.data.thermostat.current_display_temperature
+        return self.data.toon.thermostat.current_display_temperature
 
     @property
     def target_temperature(self) -> float | None:
         """Return the temperature we try to reach."""
-        return self.coordinator.data.thermostat.current_setpoint
+        return self.data.toon.thermostat.current_setpoint
 
     @property
     def extra_state_attributes(self) -> dict[str, Any]:
         """Return the current state of the burner."""
         return {
-            "burner_info": self.coordinator.data.thermostat.burner_state,
-            "modulation_level": self.coordinator.data.thermostat.current_modulation_level,
+            "burner_info": self.data.toon.thermostat.burner_state,
+            "modulation_level": self.data.toon.thermostat.current_modulation_level,
         }
 
     @toon_exception_handler

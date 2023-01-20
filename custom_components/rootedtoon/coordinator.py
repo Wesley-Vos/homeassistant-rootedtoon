@@ -20,22 +20,24 @@ _LOGGER = logging.getLogger(__name__)
 class RootedToonDataUpdateCoordinator(DataUpdateCoordinator[Devices]):
     """Class to manage fetching Toon data from single endpoint."""
 
-    def __init__(self, hass: HomeAssistant, *, entry: ConfigEntry) -> None:
+    def __init__(
+        self,
+        hass: HomeAssistant,
+        *,
+        entry: ConfigEntry,
+        toon: Toon,
+        update_interval: int,
+    ) -> None:
         """Initialize global Toon data updater."""
         self.entry = entry
         self.config = entry.data
-
-        self.toon = Toon(
-            host=self.config.get(CONF_HOST),
-            port=self.config.get(CONF_PORT),
-            session=async_get_clientsession(hass),
-        )
+        self.toon = toon
 
         super().__init__(
             hass,
             _LOGGER,
             name=DOMAIN,
-            update_interval=timedelta(seconds=self.config.get(CONF_SCAN_INTERVAL)),
+            update_interval=timedelta(seconds=update_interval),
         )
 
     async def _async_update_data(self) -> Devices:

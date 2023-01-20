@@ -46,43 +46,37 @@ async def async_setup_entry(
     hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback
 ) -> None:
     """Set up Toon sensors based on a config entry."""
-    coordinator = hass.data[DOMAIN][entry.entry_id]
+    data = hass.data[DOMAIN][entry.entry_id]
 
     entities = []
-    if coordinator.data.electricity_meter.available():
+    if data.toon.electricity_meter.available():
         entities.extend(
             [
                 description.cls(
-                    coordinator, entry, description, coordinator.data.electricity_meter
+                    coordinator, entry, description, data.toon.electricity_meter
                 )
                 for description in ELECTRICITY_SENSOR_ENTITIES
             ]
         )
-    if coordinator.data.gas_meter.available():
+    if data.toon.gas_meter.available():
         entities.extend(
             [
-                description.cls(
-                    coordinator, entry, description, coordinator.data.gas_meter
-                )
+                description.cls(coordinator, entry, description, data.toon.gas_meter)
                 for description in GAS_SENSOR_ENTITIES
             ]
         )
 
-    if coordinator.data.thermostat.have_opentherm_boiler:
+    if data.toon.thermostat.have_opentherm_boiler:
         entities.extend(
             [
-                description.cls(
-                    coordinator, entry, description, coordinator.data.boiler
-                )
+                description.cls(coordinator, entry, description, data.toon.boiler)
                 for description in BOILER_SENSOR_ENTITIES
-                if coordinator.data.boiler.available()
+                if data.toon.boiler.available()
             ]
         )
         entities.extend(
             [
-                description.cls(
-                    coordinator, entry, description, coordinator.data.thermostat
-                )
+                description.cls(coordinator, entry, description, data.toon.thermostat)
                 for description in THERMOSTAT_SENSOR_ENTITIES
             ]
         )
