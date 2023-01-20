@@ -268,6 +268,14 @@ THERMOSTAT_SENSOR_ENTITIES: tuple[ToonSensorEntityDescription, ...] = (
         cls=ToonBoilerDeviceSensor,
     ),
     ToonSensorEntityDescription(
+        key="current_setpoint",
+        name="Toon setpoint",
+        native_unit_of_measurement=UnitOfTemperature.CELSIUS,
+        device_class=SensorDeviceClass.TEMPERATURE,
+        state_class=SensorStateClass.MEASUREMENT,
+        cls=ToonBoilerDeviceSensor,
+    ),
+    ToonSensorEntityDescription(
         key="current_display_temperature",
         name="Toon Temperature",
         native_unit_of_measurement=UnitOfTemperature.CELSIUS,
