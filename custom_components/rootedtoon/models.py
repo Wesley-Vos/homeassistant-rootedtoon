@@ -12,9 +12,13 @@ from .const import (
     CONF_BOILER_SUFFIX,
     CONF_P1_METER_PREFIX,
     CONF_P1_METER_SUFFIX,
+    CONF_THERMOSTAT_PREFIX,
+    CONF_THERMOSTAT_SUFFIX,
+    DEVICE_BOILER,
     DEVICE_BOILER_MODULE,
     DEVICE_ELECTRICITY,
     DEVICE_P1_METER,
+    DEVICE_THERMOSTAT,
     DOMAIN,
     ENECO,
 )
@@ -26,8 +30,36 @@ class ToonEntity(CoordinatorEntity[RootedToonDataUpdateCoordinator]):
     """Defines a base Toon entity."""
 
 
-class ToonDisplayDeviceEntity(ToonEntity):
-    """Defines a Toon display device entity."""
+class ToonDeviceEntity(ToonEntity):
+    """Defines a Toon entity."""
+
+    @property
+    def device_info(self) -> DeviceInfo:
+        """Return device information about this entity."""
+        config = self.coordinator.config
+        conf_name = config.get(CONF_NAME)
+
+        return DeviceInfo(
+            name=conf_name,
+            identifiers={(DOMAIN, conf_name)},  # type: ignore[arg-type]
+        )
+
+
+class ToonThermostatDeviceEntity(ToonEntity):
+    """Defines a Toon thermostat entity."""
+
+    @property
+    def device_info(self) -> DeviceInfo:
+        """Return device information about this entity."""
+        config = self.coordinator.config
+        conf_name = config.get(CONF_NAME)
+        name = f"{config.get(CONF_THERMOSTAT_PREFIX)} thermostat {config.get(CONF_THERMOSTAT_SUFFIX)}".strip()
+
+        return DeviceInfo(
+            name=upper_first(name),
+            identifiers={(DOMAIN, conf_name, DEVICE_THERMOSTAT)},  # type: ignore[arg-type]
+            via_device=(DOMAIN, conf_name),  # type: ignore[typeddict-item]
+        )
 
 
 class ToonElectricityMeterDeviceEntity(ToonEntity):
@@ -96,7 +128,7 @@ class ToonBoilerDeviceEntity(ToonEntity):
         )
         return DeviceInfo(
             name=upper_first(name),
-            identifiers={(DOMAIN, conf_name, "boiler")},  # type: ignore[arg-type]
+            identifiers={(DOMAIN, conf_name, DEVICE_BOILER)},  # type: ignore[arg-type]
             via_device=(DOMAIN, conf_name, DEVICE_BOILER_MODULE),  # type: ignore[typeddict-item]
         )
 

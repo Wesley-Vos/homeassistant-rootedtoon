@@ -39,7 +39,7 @@ from .const import (
     ENECO,
 )
 from .helpers import toon_exception_handler
-from .models import ToonDisplayDeviceEntity
+from .models import ToonThermostatDeviceEntity
 from .util import upper_first
 
 
@@ -51,7 +51,7 @@ async def async_setup_entry(
     async_add_entities([ToonThermostatDevice(coordinator, entry.data)])
 
 
-class ToonThermostatDevice(ToonDisplayDeviceEntity, ClimateEntity):
+class ToonThermostatDevice(ToonThermostatDeviceEntity, ClimateEntity):
     """Representation of a Toon climate device."""
 
     _attr_icon = "mdi:thermostat"
@@ -148,13 +148,3 @@ class ToonThermostatDevice(ToonDisplayDeviceEntity, ClimateEntity):
         """Set new target hvac mode."""
         mapping = {HVACMode.AUTO: PROGRAM_STATE_ON, HVACMode.HEAT: PROGRAM_STATE_OFF}
         await self.coordinator.toon.set_hvac_mode(mapping[hvac_mode])
-
-    @property
-    def device_info(self) -> DeviceInfo:
-        """Return the device info."""
-        return DeviceInfo(
-            identifiers={(DOMAIN, self.unique_id)},
-            name=self.name,
-            manufacturer=ENECO,
-            via_device=(DOMAIN, self.config.get(CONF_NAME)),
-        )

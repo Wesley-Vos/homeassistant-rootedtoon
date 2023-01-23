@@ -17,9 +17,11 @@ DEFAULT_MIN_TEMP = 6.0
 DEFAULT_NAME = "Toon"
 DEFAULT_PORT = 80
 
+DEVICE_BOILER = "boiler"
 DEVICE_BOILER_MODULE = "boiler_module"
 DEVICE_ELECTRICITY = "electricity"
 DEVICE_P1_METER = "p1_meter"
+DEVICE_THERMOSTAT = "thermostat"
 
 ENECO = "Eneco"
 

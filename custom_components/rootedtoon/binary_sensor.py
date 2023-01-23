@@ -24,8 +24,8 @@ from .coordinator import RootedToonDataUpdateCoordinator
 from .models import (
     ToonBoilerDeviceEntity,
     ToonBoilerModuleDeviceEntity,
-    ToonDisplayDeviceEntity,
     ToonEntity,
+    ToonThermostatDeviceEntity,
 )
 from .util import upper_first
 from typing import Any
@@ -102,7 +102,7 @@ class ToonBoilerBinarySensor(ToonBinarySensor, ToonBoilerDeviceEntity):
         self._attr_name = upper_first(name)
 
 
-class ToonDisplayBinarySensor(ToonBinarySensor, ToonDisplayDeviceEntity):
+class ToonThermostatBinarySensor(ToonBinarySensor, ToonThermostatDeviceEntity):
     """Defines a Toon Display binary sensor."""
 
     def __init__(
@@ -161,7 +161,7 @@ BINARY_SENSOR_ENTITIES = (
         key="program_overridden",
         name="Thermostat program override",
         icon="mdi:gesture-tap",
-        cls=ToonDisplayBinarySensor,
+        cls=ToonThermostatBinarySensor,
     ),
 )
 

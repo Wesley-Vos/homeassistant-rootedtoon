@@ -28,14 +28,18 @@ from .const import (
     CONF_BOILER_SUFFIX,
     CONF_P1_METER_PREFIX,
     CONF_P1_METER_SUFFIX,
+    CONF_THERMOSTAT_PREFIX,
+    CONF_THERMOSTAT_SUFFIX,
     DOMAIN,
 )
 from .coordinator import RootedToonDataUpdateCoordinator
 from .models import (
     ToonBoilerDeviceEntity,
     ToonElectricityMeterDeviceEntity,
+    ToonDeviceEntity,
     ToonEntity,
     ToonGasMeterDeviceEntity,
+    ToonThermostatDeviceEntity,
     # ToonRequiredKeysMixin,
     # ToonSolarDeviceEntity,
     # ToonWaterMeterDeviceEntity,
@@ -160,6 +164,38 @@ class ToonBoilerDeviceSensor(ToonSensor, ToonBoilerDeviceEntity):
         self._attr_name = upper_first(name)
 
 
+class ToonThermostatDeviceSensor(ToonSensor, ToonThermostatDeviceEntity):
+    """Defines a Thermostat sensor."""
+
+    def __init__(
+        self,
+        coordinator: RootedToonDataUpdateCoordinator,
+        entry: ConfigEntry,
+        description: ToonSensorEntityDescription,
+        device: Any,
+    ) -> None:
+        super().__init__(coordinator, entry, description, device)
+
+        name = f"{entry.data.get(CONF_THERMOSTAT_PREFIX) } {description.name.lower()} { entry.data.get(CONF_THERMOSTAT_SUFFIX)}".strip()
+        self._attr_name = upper_first(name)
+
+
+class ToonDeviceSensor(ToonSensor, ToonDeviceEntity):
+    """Defines a Toon sensor."""
+
+    def __init__(
+        self,
+        coordinator: RootedToonDataUpdateCoordinator,
+        entry: ConfigEntry,
+        description: ToonSensorEntityDescription,
+        device: Any,
+    ) -> None:
+        super().__init__(coordinator, entry, description, device)
+
+        name = f"{entry.data.get(CONF_THERMOSTAT_PREFIX) } {description.name.lower()} { entry.data.get(CONF_THERMOSTAT_SUFFIX)}".strip()
+        self._attr_name = upper_first(name)
+
+
 @dataclass
 class ToonSensorRequiredKeysMixin:
     """Mixin for sensor required keys."""
@@ -269,19 +305,19 @@ THERMOSTAT_SENSOR_ENTITIES: tuple[ToonSensorEntityDescription, ...] = (
     ),
     ToonSensorEntityDescription(
         key="current_setpoint",
-        name="Toon setpoint",
+        name="Setpoint",
         native_unit_of_measurement=UnitOfTemperature.CELSIUS,
         device_class=SensorDeviceClass.TEMPERATURE,
         state_class=SensorStateClass.MEASUREMENT,
-        cls=ToonBoilerDeviceSensor,
+        cls=ToonThermostatDeviceSensor,
     ),
     ToonSensorEntityDescription(
         key="current_display_temperature",
-        name="Toon Temperature",
+        name="Temperature",
         native_unit_of_measurement=UnitOfTemperature.CELSIUS,
         device_class=SensorDeviceClass.TEMPERATURE,
         state_class=SensorStateClass.MEASUREMENT,
-        cls=ToonBoilerDeviceSensor,
+        cls=ToonDeviceSensor,
     ),
 )
 BOILER_SENSOR_ENTITIES: tuple[ToonSensorEntityDescription, ...] = (
