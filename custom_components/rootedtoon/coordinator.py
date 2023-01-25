@@ -85,7 +85,6 @@ class RootedToonDataUpdateCoordinator(DataUpdateCoordinator[Devices]):
         try:
             for update in self.update_intervals:
                 if self.update_tick % update.get(UPDATE_INTERVAL) == 0:
-                    print(datetime.now(), "Execute", update.get(UPDATE_FUNC))
                     await update.get(UPDATE_FUNC)()
 
             self.update_tick = (self.update_tick + 1) % self.max_tick_size

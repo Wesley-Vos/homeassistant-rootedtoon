@@ -34,7 +34,7 @@ class ToonThermostatCalendar(CalendarEntity, ToonThermostatDeviceEntity):
         """Initialize Toon climate entity."""
         super().__init__(coordinator)
 
-        name = f"{entry.data.get(CONF_THERMOSTAT_PREFIX) } calendar { entry.data.get(CONF_THERMOSTAT_SUFFIX)}".strip()
+        name = f"{entry.data.get(CONF_THERMOSTAT_PREFIX) } program { entry.data.get(CONF_THERMOSTAT_SUFFIX)}".strip()
         self._attr_name = upper_first(name)
 
     def _map_to_calendar_event(self, data):
