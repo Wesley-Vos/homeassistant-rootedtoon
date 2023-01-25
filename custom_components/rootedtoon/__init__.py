@@ -1,20 +1,19 @@
 """Support for Toon van Eneco devices."""
 import voluptuous as vol
 
-from homeassistant.config_entries import SOURCE_IMPORT, ConfigEntry
+from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_NAME, Platform
-from homeassistant.core import CoreState, HomeAssistant
+from homeassistant.core import HomeAssistant
 from homeassistant.helpers import config_validation as cv, device_registry as dr
-from homeassistant.helpers.typing import ConfigType
 
 from .const import DEVICE_P1_METER, DOMAIN, ENECO
 from .coordinator import RootedToonDataUpdateCoordinator
 
 PLATFORMS = [
     Platform.BINARY_SENSOR,
+    Platform.CALENDAR,
     Platform.CLIMATE,
     Platform.SENSOR,
-    # Platform.SWITCH,
 ]
 
 

@@ -10,6 +10,9 @@ from homeassistant.components.sensor import (
 DOMAIN = "rootedtoon"
 
 CONF_MIGRATE = "migrate"
+CONF_SCAN_INTERVAL_BOILER = "scan_interval_boiler"
+CONF_SCAN_INTERVAL_P1_METER = "scan_interval_p1_meter"
+CONF_SCAN_INTERVAL_THERMOSTAT = "scan_interval_thermostat"
 
 DEFAULT_SCAN_INTERVAL = 10
 DEFAULT_MAX_TEMP = 30.0
@@ -36,3 +39,6 @@ CONF_P1_METER_PREFIX = "p1_meter_prefix"
 CONF_P1_METER_SUFFIX = "p1_meter_suffix"
 CONF_THERMOSTAT_SUFFIX = "thermostat_suffix"
 CONF_THERMOSTAT_PREFIX = "thermostat_prefix"
+
+UPDATE_FUNC = "update_func"
+UPDATE_INTERVAL = "update_interval"
