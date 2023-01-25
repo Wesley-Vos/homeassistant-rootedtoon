@@ -1,6 +1,20 @@
 """Constants for the Toon integration."""
 from datetime import timedelta
 
+from rootedtoonapi import (
+    ACTIVE_STATE_AWAY,
+    ACTIVE_STATE_COMFORT,
+    ACTIVE_STATE_HOME,
+    ACTIVE_STATE_SLEEP,
+)
+
+from homeassistant.components.climate import (
+    PRESET_AWAY,
+    PRESET_COMFORT,
+    PRESET_HOME,
+    PRESET_SLEEP,
+)
+
 DOMAIN = "rootedtoon"
 
 CONF_BOILER_PREFIX = "boiler_prefix"
@@ -36,6 +50,17 @@ ENECO = "Eneco"
 
 UPDATE_FUNC = "update_func"
 UPDATE_INTERVAL = "update_interval"
+
+STATE_TO_PRESET_MODE_MAPPING = {
+    ACTIVE_STATE_AWAY: PRESET_AWAY,
+    ACTIVE_STATE_COMFORT: PRESET_COMFORT,
+    ACTIVE_STATE_HOME: PRESET_HOME,
+    ACTIVE_STATE_SLEEP: PRESET_SLEEP,
+}
+
+PRESET_MODE_TO_STATE_MAPPING = {
+    value: key for key, value in STATE_TO_PRESET_MODE_MAPPING.items()
+}
 
 VOLUME_CM3 = "CM3"
 VOLUME_LHOUR = "L/H"

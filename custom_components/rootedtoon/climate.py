@@ -1,14 +1,11 @@
 """Support for Toon thermostat."""
 from __future__ import annotations
 
+
 from homeassistant.helpers.entity import DeviceInfo
 from typing import Any
 
 from rootedtoonapi import (
-    ACTIVE_STATE_AWAY,
-    ACTIVE_STATE_COMFORT,
-    ACTIVE_STATE_HOME,
-    ACTIVE_STATE_SLEEP,
     PROGRAM_STATE_OFF,
     PROGRAM_STATE_ON,
     PROGRAM_STATE_OVERRIDE,
@@ -36,6 +33,8 @@ from .const import (
     DEFAULT_MAX_TEMP,
     DEFAULT_MIN_TEMP,
     DOMAIN,
+    PRESET_MODE_TO_STATE_MAPPING,
+    STATE_TO_PRESET_MODE_MAPPING,
 )
 from .helpers import toon_exception_handler
 from .models import ToonThermostatDeviceEntity
@@ -98,13 +97,9 @@ class ToonThermostatDevice(ToonThermostatDeviceEntity, ClimateEntity):
     @property
     def preset_mode(self) -> str | None:
         """Return the current preset mode, e.g., home, away, temp."""
-        mapping = {
-            ACTIVE_STATE_AWAY: PRESET_AWAY,
-            ACTIVE_STATE_COMFORT: PRESET_COMFORT,
-            ACTIVE_STATE_HOME: PRESET_HOME,
-            ACTIVE_STATE_SLEEP: PRESET_SLEEP,
-        }
-        return mapping.get(self.coordinator.data.thermostat.active_state)
+        return STATE_TO_PRESET_MODE_MAPPING.get(
+            self.coordinator.data.thermostat.active_state
+        )
 
     @property
     def current_temperature(self) -> float | None:
@@ -133,14 +128,10 @@ class ToonThermostatDevice(ToonThermostatDeviceEntity, ClimateEntity):
     @toon_exception_handler
     async def async_set_preset_mode(self, preset_mode: str) -> None:
         """Set new preset mode."""
-        mapping = {
-            PRESET_AWAY: ACTIVE_STATE_AWAY,
-            PRESET_COMFORT: ACTIVE_STATE_COMFORT,
-            PRESET_HOME: ACTIVE_STATE_HOME,
-            PRESET_SLEEP: ACTIVE_STATE_SLEEP,
-        }
-        if preset_mode in mapping:
-            await self.coordinator.toon.set_active_state(mapping[preset_mode])
+        if preset_mode in PRESET_MODE_TO_STATE_MAPPING:
+            await self.coordinator.toon.set_active_state(
+                PRESET_MODE_TO_STATE_MAPPING[preset_mode]
+            )
 
     @toon_exception_handler
     async def async_set_hvac_mode(self, hvac_mode: HVACMode) -> None:

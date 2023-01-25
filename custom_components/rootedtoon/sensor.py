@@ -33,6 +33,7 @@ from .const import (
     CONF_THERMOSTAT_PREFIX,
     CONF_THERMOSTAT_SUFFIX,
     DOMAIN,
+    STATE_TO_PRESET_MODE_MAPPING,
 )
 from .coordinator import RootedToonDataUpdateCoordinator
 from .models import (
@@ -91,6 +92,14 @@ async def async_setup_entry(
                     coordinator, entry, description, coordinator.data.thermostat
                 )
                 for description in THERMOSTAT_SENSOR_ENTITIES
+            ]
+        )
+        entities.extend(
+            [
+                description.cls(
+                    coordinator, entry, description, coordinator.data.thermostat
+                )
+                for description in THERMOSTAT_PROGRAM_SENSOR_ENTITIES
             ]
         )
 
@@ -196,6 +205,25 @@ class ToonDeviceSensor(ToonSensor, ToonDeviceEntity):
 
         name = f"{entry.data.get(CONF_THERMOSTAT_PREFIX) } {description.name.lower()} { entry.data.get(CONF_THERMOSTAT_SUFFIX)}".strip()
         self._attr_name = upper_first(name)
+
+
+class ToonThermostatProgramSensor(
+    ToonThermostatDeviceSensor, ToonThermostatDeviceEntity
+):
+    """Defines a Thermostat sensor."""
+
+    @property
+    def native_value(self) -> str | None:
+        """Return the state of the sensor."""
+        return STATE_TO_PRESET_MODE_MAPPING.get(
+            getattr(self.device, self.entity_description.key).state
+        )
+
+    @property
+    def extra_state_attributes(self):
+        return {
+            "start": getattr(self.device, self.entity_description.key).start_datetime
+        }
 
 
 @dataclass
@@ -322,6 +350,15 @@ THERMOSTAT_SENSOR_ENTITIES: tuple[ToonSensorEntityDescription, ...] = (
         cls=ToonDeviceSensor,
     ),
 )
+THERMOSTAT_PROGRAM_SENSOR_ENTITIES: tuple[ToonSensorEntityDescription, ...] = (
+    ToonSensorEntityDescription(
+        key="next_program_state",
+        name="Next program",
+        icon="mdi:calendar",
+        cls=ToonThermostatProgramSensor,
+    ),
+)
+
 BOILER_SENSOR_ENTITIES: tuple[ToonSensorEntityDescription, ...] = (
     ToonSensorEntityDescription(
         key="pressure",
