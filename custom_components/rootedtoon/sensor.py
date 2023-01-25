@@ -353,7 +353,7 @@ THERMOSTAT_SENSOR_ENTITIES: tuple[ToonSensorEntityDescription, ...] = (
 THERMOSTAT_PROGRAM_SENSOR_ENTITIES: tuple[ToonSensorEntityDescription, ...] = (
     ToonSensorEntityDescription(
         key="next_program_state",
-        name="Next program",
+        name="Thermostat next program",
         icon="mdi:calendar",
         cls=ToonThermostatProgramSensor,
     ),
