@@ -9,7 +9,7 @@ import voluptuous as vol
 from homeassistant import config_entries
 from homeassistant.const import CONF_HOST, CONF_NAME, CONF_PORT, CONF_SCAN_INTERVAL
 from homeassistant.data_entry_flow import FlowResult
-from homeassistant.helpers import config_validation as cv
+from homeassistant.helpers import config_validation as cv, selector
 
 from .const import (
     DEFAULT_NAME,
@@ -17,10 +17,14 @@ from .const import (
     DEFAULT_SCAN_INTERVAL,
     CONF_BOILER_PREFIX,
     CONF_BOILER_SUFFIX,
+    CONF_ENABLE_BOILER,
+    CONF_ENABLE_P1_METER,
+    CONF_ENABLE_PROGRAM,
     CONF_P1_METER_PREFIX,
     CONF_P1_METER_SUFFIX,
     CONF_SCAN_INTERVAL_BOILER,
     CONF_SCAN_INTERVAL_P1_METER,
+    CONF_SCAN_INTERVAL_PROGRAM,
     CONF_SCAN_INTERVAL_THERMOSTAT,
     CONF_THERMOSTAT_PREFIX,
     CONF_THERMOSTAT_SUFFIX,
@@ -33,13 +37,17 @@ CONFIG_SCHEMA = vol.Schema(
         vol.Optional(CONF_NAME, default=DEFAULT_NAME): str,
         vol.Required(CONF_HOST): str,
         vol.Optional(CONF_PORT, default=DEFAULT_PORT): int,
+        vol.Required(CONF_ENABLE_BOILER, default=True): selector.BooleanSelector(),
         vol.Optional(CONF_SCAN_INTERVAL_BOILER, default=DEFAULT_SCAN_INTERVAL): int,
-        vol.Optional(CONF_SCAN_INTERVAL_P1_METER, default=DEFAULT_SCAN_INTERVAL): int,
-        vol.Optional(CONF_SCAN_INTERVAL_THERMOSTAT, default=DEFAULT_SCAN_INTERVAL): int,
         vol.Optional(CONF_BOILER_PREFIX, default=""): str,
         vol.Optional(CONF_BOILER_SUFFIX, default=""): str,
+        vol.Required(CONF_ENABLE_P1_METER, default=True): selector.BooleanSelector(),
+        vol.Optional(CONF_SCAN_INTERVAL_P1_METER, default=DEFAULT_SCAN_INTERVAL): int,
         vol.Optional(CONF_P1_METER_PREFIX, default=""): str,
         vol.Optional(CONF_P1_METER_SUFFIX, default=""): str,
+        vol.Required(CONF_ENABLE_PROGRAM, default=True): selector.BooleanSelector(),
+        vol.Optional(CONF_SCAN_INTERVAL_PROGRAM, default=DEFAULT_SCAN_INTERVAL): int,
+        vol.Optional(CONF_SCAN_INTERVAL_THERMOSTAT, default=DEFAULT_SCAN_INTERVAL): int,
         vol.Optional(CONF_THERMOSTAT_PREFIX, default=""): str,
         vol.Optional(CONF_THERMOSTAT_SUFFIX, default=""): str,
     }

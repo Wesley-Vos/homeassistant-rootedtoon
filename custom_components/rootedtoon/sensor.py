@@ -26,6 +26,8 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from .const import (
     CONF_BOILER_PREFIX,
     CONF_BOILER_SUFFIX,
+    CONF_ENABLE_BOILER,
+    CONF_ENABLE_P1_METER,
     CONF_P1_METER_PREFIX,
     CONF_P1_METER_SUFFIX,
     CONF_THERMOSTAT_PREFIX,
@@ -40,9 +42,6 @@ from .models import (
     ToonEntity,
     ToonGasMeterDeviceEntity,
     ToonThermostatDeviceEntity,
-    # ToonRequiredKeysMixin,
-    # ToonSolarDeviceEntity,
-    # ToonWaterMeterDeviceEntity,
 )
 from .util import upper_first
 
@@ -53,8 +52,11 @@ async def async_setup_entry(
     """Set up Toon sensors based on a config entry."""
     coordinator = hass.data[DOMAIN][entry.entry_id]
 
+    boiler_enabled = entry.data.get(CONF_ENABLE_BOILER)
+    p1_meter_enabled = entry.data.get(CONF_ENABLE_P1_METER)
+
     entities = []
-    if coordinator.data.electricity_meter.available():
+    if p1_meter_enabled and coordinator.data.electricity_meter.available():
         entities.extend(
             [
                 description.cls(
@@ -63,7 +65,7 @@ async def async_setup_entry(
                 for description in ELECTRICITY_SENSOR_ENTITIES
             ]
         )
-    if coordinator.data.gas_meter.available():
+    if p1_meter_enabled and coordinator.data.gas_meter.available():
         entities.extend(
             [
                 description.cls(
@@ -74,15 +76,15 @@ async def async_setup_entry(
         )
 
     if coordinator.data.thermostat.have_opentherm_boiler:
-        entities.extend(
-            [
-                description.cls(
-                    coordinator, entry, description, coordinator.data.boiler
-                )
-                for description in BOILER_SENSOR_ENTITIES
-                if coordinator.data.boiler.available()
-            ]
-        )
+        if boiler_enabled and coordinator.data.boiler.available():
+            entities.extend(
+                [
+                    description.cls(
+                        coordinator, entry, description, coordinator.data.boiler
+                    )
+                    for description in BOILER_SENSOR_ENTITIES
+                ]
+            )
         entities.extend(
             [
                 description.cls(

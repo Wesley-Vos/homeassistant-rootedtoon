@@ -8,7 +8,12 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from . import RootedToonDataUpdateCoordinator
-from .const import CONF_THERMOSTAT_PREFIX, CONF_THERMOSTAT_SUFFIX, DOMAIN
+from .const import (
+    CONF_ENABLE_PROGRAM,
+    CONF_THERMOSTAT_PREFIX,
+    CONF_THERMOSTAT_SUFFIX,
+    DOMAIN,
+)
 
 from homeassistant.components.calendar import CalendarEntity, CalendarEvent
 from .models import ToonThermostatDeviceEntity
@@ -20,7 +25,8 @@ async def async_setup_entry(
 ) -> None:
     """Set up a Toon calendar based on a config entry."""
     coordinator = hass.data[DOMAIN][entry.entry_id]
-    async_add_entities([ToonThermostatCalendar(coordinator, entry)])
+    if entry.data.get(CONF_ENABLE_PROGRAM):
+        async_add_entities([ToonThermostatCalendar(coordinator, entry)])
 
 
 class ToonThermostatCalendar(CalendarEntity, ToonThermostatDeviceEntity):

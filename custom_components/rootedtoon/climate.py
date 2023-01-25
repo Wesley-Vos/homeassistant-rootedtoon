@@ -36,7 +36,6 @@ from .const import (
     DEFAULT_MAX_TEMP,
     DEFAULT_MIN_TEMP,
     DOMAIN,
-    ENECO,
 )
 from .helpers import toon_exception_handler
 from .models import ToonThermostatDeviceEntity

@@ -15,8 +15,12 @@ from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
 from .const import (
+    CONF_ENABLE_BOILER,
+    CONF_ENABLE_P1_METER,
+    CONF_ENABLE_PROGRAM,
     CONF_SCAN_INTERVAL_BOILER,
     CONF_SCAN_INTERVAL_P1_METER,
+    CONF_SCAN_INTERVAL_PROGRAM,
     CONF_SCAN_INTERVAL_THERMOSTAT,
     DOMAIN,
     UPDATE_INTERVAL,
@@ -40,34 +44,42 @@ class RootedToonDataUpdateCoordinator(DataUpdateCoordinator[Devices]):
             port=self.config.get(CONF_PORT),
             session=async_get_clientsession(hass),
         )
-        update_intervals = [
-            self.config.get(conf_var)
-            for conf_var in [
-                CONF_SCAN_INTERVAL_BOILER,
-                CONF_SCAN_INTERVAL_P1_METER,
-                CONF_SCAN_INTERVAL_THERMOSTAT,
-            ]
-        ]
+
+        devices = (
+            (
+                self.config.get(CONF_ENABLE_BOILER),
+                int(self.config.get(CONF_SCAN_INTERVAL_BOILER)),
+                self.toon.update_boiler,
+            ),
+            (
+                self.config.get(CONF_ENABLE_P1_METER),
+                int(self.config.get(CONF_SCAN_INTERVAL_P1_METER)),
+                self.toon.update_energy_meter,
+            ),
+            (
+                self.config.get(CONF_ENABLE_PROGRAM),
+                int(self.config.get(CONF_SCAN_INTERVAL_PROGRAM)),
+                self.toon.update_program,
+            ),
+            (
+                True,
+                int(self.config.get(CONF_SCAN_INTERVAL_THERMOSTAT)),
+                self.toon.update_climate,
+            ),
+        )
+
+        update_intervals = [device[1] for device in devices if device[0]]
         common_update_interval = reduce(gcd, update_intervals)
 
         self.update_intervals = [
             {
-                UPDATE_INTERVAL: int(update_intervals[0] / common_update_interval),
-                UPDATE_FUNC: self.toon.update_boiler,
-            },
-            {
-                UPDATE_INTERVAL: int(update_intervals[1] / common_update_interval),
-                UPDATE_FUNC: self.toon.update_energy_meter,
-            },
-            {
-                UPDATE_INTERVAL: int(update_intervals[2] / common_update_interval),
-                UPDATE_FUNC: self.toon.update_climate,
-            },
-            {
-                UPDATE_INTERVAL: int(update_intervals[0] / common_update_interval),
-                UPDATE_FUNC: self.toon.update_program,
-            },
+                UPDATE_INTERVAL: device[1] / common_update_interval,
+                UPDATE_FUNC: device[2],
+            }
+            for device in devices
+            if device[0]
         ]
+
         self.max_tick_size = max(
             update_interval.get(UPDATE_INTERVAL)
             for update_interval in self.update_intervals

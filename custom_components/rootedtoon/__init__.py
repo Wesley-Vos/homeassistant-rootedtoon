@@ -6,7 +6,7 @@ from homeassistant.const import CONF_NAME, Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import config_validation as cv, device_registry as dr
 
-from .const import DEVICE_P1_METER, DOMAIN, ENECO
+from .const import CONF_ENABLE_P1_METER, DEVICE_P1_METER, DOMAIN, ENECO
 from .coordinator import RootedToonDataUpdateCoordinator
 
 PLATFORMS = [
@@ -41,7 +41,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         model="Toon",
     )
 
-    if coordinator.data.has_meter_adapter:
+    if entry.data.get(CONF_ENABLE_P1_METER) and coordinator.data.has_meter_adapter:
         # Register device for the Meter Adapter, since it will have no entities.
         device_registry.async_get_or_create(
             config_entry_id=entry.entry_id,
