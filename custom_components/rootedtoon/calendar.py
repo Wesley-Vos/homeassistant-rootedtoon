@@ -4,6 +4,7 @@ from __future__ import annotations
 from datetime import datetime
 
 from homeassistant.config_entries import ConfigEntry
+from homeassistant.const import CONF_NAME
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
@@ -42,6 +43,7 @@ class ToonThermostatCalendar(CalendarEntity, ToonThermostatDeviceEntity):
 
         name = f"{entry.data.get(CONF_THERMOSTAT_PREFIX) } program { entry.data.get(CONF_THERMOSTAT_SUFFIX)}".strip()
         self._attr_name = upper_first(name)
+        self._attr_unique_id = f"{DOMAIN}_{entry.data.get(CONF_NAME)}_calendar"
 
     def _map_to_calendar_event(self, data):
         return CalendarEvent(
