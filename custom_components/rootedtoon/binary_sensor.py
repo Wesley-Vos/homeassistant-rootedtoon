@@ -174,7 +174,7 @@ BINARY_SENSOR_ENTITIES_BOILER: tuple[ToonBinarySensorEntityDescription, ...] = (
     ),
     ToonBinarySensorEntityDescription(
         key="hot_tapwater",
-        name="Hot tap water",
+        name="Boiler Hot tap water",
         icon="mdi:water-pump",
         cls=ToonBoilerBinarySensor,
     ),
@@ -199,7 +199,7 @@ BINARY_SENSOR_ENTITIES_BOILER: tuple[ToonBinarySensorEntityDescription, ...] = (
     ),
     ToonBinarySensorEntityDescription(
         key="opentherm_communication_error",
-        name="OpenTherm connection",
+        name="Boiler OpenTherm connection",
         inverted=True,
         device_class=BinarySensorDeviceClass.PROBLEM,
         icon="mdi:check-network-outline",

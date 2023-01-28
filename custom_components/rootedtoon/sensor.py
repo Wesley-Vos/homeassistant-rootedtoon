@@ -335,7 +335,7 @@ THERMOSTAT_SENSOR_ENTITIES: tuple[ToonSensorEntityDescription, ...] = (
     ),
     ToonSensorEntityDescription(
         key="current_setpoint",
-        name="Setpoint",
+        name="Thermostat Setpoint",
         native_unit_of_measurement=UnitOfTemperature.CELSIUS,
         device_class=SensorDeviceClass.TEMPERATURE,
         state_class=SensorStateClass.MEASUREMENT,
