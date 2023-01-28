@@ -262,6 +262,7 @@ ELECTRICITY_SENSOR_ENTITIES: tuple[ToonSensorEntityDescription, ...] = (
         key="electricity_return_high",
         name="Electricity return high",
         native_unit_of_measurement=POWER_WATT,
+        native_precision=1,
         state_class=SensorStateClass.MEASUREMENT,
         device_class=SensorDeviceClass.POWER,
         cls=ToonElectricityMeterDeviceSensor,
@@ -270,6 +271,7 @@ ELECTRICITY_SENSOR_ENTITIES: tuple[ToonSensorEntityDescription, ...] = (
         key="electricity_return_low",
         name="Electricity return low",
         native_unit_of_measurement=POWER_WATT,
+        native_precision=1,
         state_class=SensorStateClass.MEASUREMENT,
         device_class=SensorDeviceClass.POWER,
         cls=ToonElectricityMeterDeviceSensor,
@@ -277,6 +279,7 @@ ELECTRICITY_SENSOR_ENTITIES: tuple[ToonSensorEntityDescription, ...] = (
     ToonSensorEntityDescription(
         key="electricity_delivery_high",
         name="Electricity delivery high",
+        native_precision=1,
         native_unit_of_measurement=POWER_WATT,
         state_class=SensorStateClass.MEASUREMENT,
         device_class=SensorDeviceClass.POWER,
@@ -285,6 +288,7 @@ ELECTRICITY_SENSOR_ENTITIES: tuple[ToonSensorEntityDescription, ...] = (
     ToonSensorEntityDescription(
         key="electricity_delivery_low",
         name="Electricity delivery low",
+        native_precision=1,
         native_unit_of_measurement=POWER_WATT,
         state_class=SensorStateClass.MEASUREMENT,
         device_class=SensorDeviceClass.POWER,
@@ -293,6 +297,7 @@ ELECTRICITY_SENSOR_ENTITIES: tuple[ToonSensorEntityDescription, ...] = (
     ToonSensorEntityDescription(
         key="electricity_returned_high",
         name="Electricity returned high",
+        native_precision=3,
         native_unit_of_measurement=ENERGY_KILO_WATT_HOUR,
         state_class=SensorStateClass.TOTAL_INCREASING,
         device_class=SensorDeviceClass.ENERGY,
@@ -301,6 +306,7 @@ ELECTRICITY_SENSOR_ENTITIES: tuple[ToonSensorEntityDescription, ...] = (
     ToonSensorEntityDescription(
         key="electricity_returned_low",
         name="Electricity returned low",
+        native_precision=3,
         native_unit_of_measurement=ENERGY_KILO_WATT_HOUR,
         state_class=SensorStateClass.TOTAL_INCREASING,
         device_class=SensorDeviceClass.ENERGY,
@@ -309,6 +315,7 @@ ELECTRICITY_SENSOR_ENTITIES: tuple[ToonSensorEntityDescription, ...] = (
     ToonSensorEntityDescription(
         key="electricity_delivered_high",
         name="Electricity delivered high",
+        native_precision=3,
         native_unit_of_measurement=ENERGY_KILO_WATT_HOUR,
         state_class=SensorStateClass.TOTAL_INCREASING,
         device_class=SensorDeviceClass.ENERGY,
@@ -317,6 +324,7 @@ ELECTRICITY_SENSOR_ENTITIES: tuple[ToonSensorEntityDescription, ...] = (
     ToonSensorEntityDescription(
         key="electricity_delivered_low",
         name="Electricity delivered low",
+        native_precision=3,
         native_unit_of_measurement=ENERGY_KILO_WATT_HOUR,
         state_class=SensorStateClass.TOTAL_INCREASING,
         device_class=SensorDeviceClass.ENERGY,
@@ -328,6 +336,7 @@ THERMOSTAT_SENSOR_ENTITIES: tuple[ToonSensorEntityDescription, ...] = (
     ToonSensorEntityDescription(
         key="current_modulation_level",
         name="Boiler modulation level",
+        native_precision=0,
         native_unit_of_measurement=PERCENTAGE,
         icon="mdi:percent",
         state_class=SensorStateClass.MEASUREMENT,
@@ -336,6 +345,7 @@ THERMOSTAT_SENSOR_ENTITIES: tuple[ToonSensorEntityDescription, ...] = (
     ToonSensorEntityDescription(
         key="current_setpoint",
         name="Thermostat Setpoint",
+        native_precision=1,
         native_unit_of_measurement=UnitOfTemperature.CELSIUS,
         device_class=SensorDeviceClass.TEMPERATURE,
         state_class=SensorStateClass.MEASUREMENT,
@@ -344,6 +354,7 @@ THERMOSTAT_SENSOR_ENTITIES: tuple[ToonSensorEntityDescription, ...] = (
     ToonSensorEntityDescription(
         key="current_display_temperature",
         name="Temperature",
+        native_precision=2,
         native_unit_of_measurement=UnitOfTemperature.CELSIUS,
         device_class=SensorDeviceClass.TEMPERATURE,
         state_class=SensorStateClass.MEASUREMENT,
@@ -363,6 +374,7 @@ BOILER_SENSOR_ENTITIES: tuple[ToonSensorEntityDescription, ...] = (
     ToonSensorEntityDescription(
         key="pressure",
         name="Boiler pressure",
+        native_precision=2,
         native_unit_of_measurement=PRESSURE_BAR,
         device_class=SensorDeviceClass.PRESSURE,
         state_class=SensorStateClass.MEASUREMENT,
