@@ -76,6 +76,41 @@ async def async_setup_entry(
             ]
         )
 
+    if p1_meter_enabled and coordinator.data.smart_plugs.available:
+        for smart_plug in coordinator.data.smart_plugs.devices:
+            entities.extend(
+                [
+                    ToonSmartPlugDeviceSensor(
+                        coordinator=coordinator,
+                        entry=entry,
+                        description=ToonSensorEntityDescription(
+                            key="power",
+                            name=f"{ smart_plug.name } power",
+                            # suggested_display_precision=1,
+                            native_unit_of_measurement=POWER_WATT,
+                            state_class=SensorStateClass.MEASUREMENT,
+                            device_class=SensorDeviceClass.POWER,
+                            cls=ToonSmartPlugDeviceSensor,
+                        ),
+                        device=smart_plug,
+                    ),
+                    ToonSmartPlugDeviceSensor(
+                        coordinator=coordinator,
+                        entry=entry,
+                        description=ToonSensorEntityDescription(
+                            key="total",
+                            name=f"{ smart_plug.name } energy",
+                            # suggested_display_precision=3,
+                            native_unit_of_measurement=ENERGY_KILO_WATT_HOUR,
+                            state_class=SensorStateClass.TOTAL,
+                            device_class=SensorDeviceClass.ENERGY,
+                            cls=ToonSmartPlugDeviceSensor,
+                        ),
+                        device=smart_plug,
+                    ),
+                ]
+            )
+
     if coordinator.data.thermostat.have_opentherm_boiler:
         if boiler_enabled and coordinator.data.boiler.available():
             entities.extend(
@@ -123,9 +158,7 @@ class ToonSensor(ToonEntity, SensorEntity):
         self.device = device
         super().__init__(coordinator)
 
-        self._attr_unique_id = (
-            f"{DOMAIN}_{entry.data.get(CONF_NAME)}_sensor_{description.key}"
-        )
+        self._attr_unique_id = f"{DOMAIN}_{entry.data.get(CONF_NAME)}_sensor_{ description.name.replace(' ', '') }_{description.key}"
 
     @property
     def native_value(self) -> str | None:
@@ -157,6 +190,22 @@ class ToonElectricityMeterDeviceSensor(
 
 class ToonGasMeterDeviceSensor(ToonP1MeterSensor, ToonGasMeterDeviceEntity):
     """Defines a Gas Meter sensor."""
+
+
+class ToonSmartPlugDeviceSensor(ToonSensor, ToonDeviceEntity):
+    """Defines a Smart Plug sensor"""
+
+    def __init__(
+        self,
+        coordinator: RootedToonDataUpdateCoordinator,
+        entry: ConfigEntry,
+        description: ToonSensorEntityDescription,
+        device: Any,
+    ) -> None:
+        super().__init__(coordinator, entry, description, device)
+
+        name = f"{entry.data.get(CONF_P1_METER_PREFIX) } {description.name.lower()} { entry.data.get(CONF_P1_METER_SUFFIX)}"
+        self._attr_name = upper_first(name)
 
 
 class ToonBoilerDeviceSensor(ToonSensor, ToonBoilerDeviceEntity):
