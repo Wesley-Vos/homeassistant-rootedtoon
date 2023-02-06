@@ -8,9 +8,9 @@
   "zeroconf": [],
   "homekit": {},
   "requirements": [
-    "git+https://github.com/wesley-vos/python-rootedtoonapi@dev#rootedtoonapi==0.2.8"
+    "git+https://github.com/wesley-vos/python-rootedtoonapi@dev#rootedtoonapi==0.2.9"
   ],
   "codeowners": ["@wesley-vos"],
   "iot_class": "local_polling",
-  "version": "0.0.2b6"
+  "version": "0.0.2b7"
 }

@@ -57,20 +57,23 @@ async def async_setup_entry(
     p1_meter_enabled = entry.data.get(CONF_ENABLE_P1_METER)
 
     entities = []
-    if p1_meter_enabled and coordinator.data.electricity_meter.available():
+    if p1_meter_enabled and coordinator.data.p1_meter.electricity_meter.available:
         entities.extend(
             [
                 description.cls(
-                    coordinator, entry, description, coordinator.data.electricity_meter
+                    coordinator,
+                    entry,
+                    description,
+                    coordinator.data.p1_meter.electricity_meter,
                 )
                 for description in ELECTRICITY_SENSOR_ENTITIES
             ]
         )
-    if p1_meter_enabled and coordinator.data.gas_meter.available():
+    if p1_meter_enabled and coordinator.data.p1_meter.gas_meter.available:
         entities.extend(
             [
                 description.cls(
-                    coordinator, entry, description, coordinator.data.gas_meter
+                    coordinator, entry, description, coordinator.data.p1_meter.gas_meter
                 )
                 for description in GAS_SENSOR_ENTITIES
             ]
