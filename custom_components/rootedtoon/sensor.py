@@ -251,7 +251,7 @@ GAS_SENSOR_ENTITIES: tuple[ToonSensorEntityDescription, ...] = (
         key="last_hour",
         name="Gas used last hour",
         native_unit_of_measurement=UnitOfVolume.CUBIC_METERS,
-        state_class=SensorStateClass.MEASUREMENT,
+        state_class=SensorStateClass.TOTAL,
         device_class=SensorDeviceClass.GAS,
         cls=ToonGasMeterDeviceSensor,
     ),
