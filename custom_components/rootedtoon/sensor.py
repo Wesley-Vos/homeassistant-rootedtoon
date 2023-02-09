@@ -329,6 +329,15 @@ ELECTRICITY_SENSOR_ENTITIES: tuple[ToonSensorEntityDescription, ...] = (
         cls=ToonElectricityMeterDeviceSensor,
     ),
     ToonSensorEntityDescription(
+        key="electricity_return",
+        name="Electricity return",
+        native_unit_of_measurement=POWER_WATT,
+        # suggested_display_precision=1,
+        state_class=SensorStateClass.MEASUREMENT,
+        device_class=SensorDeviceClass.POWER,
+        cls=ToonElectricityMeterDeviceSensor,
+    ),
+    ToonSensorEntityDescription(
         key="electricity_delivery_high",
         name="Electricity delivery high",
         # suggested_display_precision=1,
@@ -340,6 +349,15 @@ ELECTRICITY_SENSOR_ENTITIES: tuple[ToonSensorEntityDescription, ...] = (
     ToonSensorEntityDescription(
         key="electricity_delivery_low",
         name="Electricity delivery low",
+        # suggested_display_precision=1,
+        native_unit_of_measurement=POWER_WATT,
+        state_class=SensorStateClass.MEASUREMENT,
+        device_class=SensorDeviceClass.POWER,
+        cls=ToonElectricityMeterDeviceSensor,
+    ),
+    ToonSensorEntityDescription(
+        key="electricity_delivery",
+        name="Electricity delivery",
         # suggested_display_precision=1,
         native_unit_of_measurement=POWER_WATT,
         state_class=SensorStateClass.MEASUREMENT,
@@ -365,6 +383,15 @@ ELECTRICITY_SENSOR_ENTITIES: tuple[ToonSensorEntityDescription, ...] = (
         cls=ToonElectricityMeterDeviceSensor,
     ),
     ToonSensorEntityDescription(
+        key="electricity_returned",
+        name="Electricity returned",
+        # suggested_display_precision=3,
+        native_unit_of_measurement=ENERGY_KILO_WATT_HOUR,
+        state_class=SensorStateClass.TOTAL_INCREASING,
+        device_class=SensorDeviceClass.ENERGY,
+        cls=ToonElectricityMeterDeviceSensor,
+    ),
+    ToonSensorEntityDescription(
         key="electricity_delivered_high",
         name="Electricity delivered high",
         # suggested_display_precision=3,
@@ -376,6 +403,15 @@ ELECTRICITY_SENSOR_ENTITIES: tuple[ToonSensorEntityDescription, ...] = (
     ToonSensorEntityDescription(
         key="electricity_delivered_low",
         name="Electricity delivered low",
+        # suggested_display_precision=3,
+        native_unit_of_measurement=ENERGY_KILO_WATT_HOUR,
+        state_class=SensorStateClass.TOTAL_INCREASING,
+        device_class=SensorDeviceClass.ENERGY,
+        cls=ToonElectricityMeterDeviceSensor,
+    ),
+    ToonSensorEntityDescription(
+        key="electricity_delivered",
+        name="Electricity delivered",
         # suggested_display_precision=3,
         native_unit_of_measurement=ENERGY_KILO_WATT_HOUR,
         state_class=SensorStateClass.TOTAL_INCREASING,
