@@ -67,10 +67,10 @@ class ToonThermostatDevice(ToonThermostatDeviceEntity, ClimateEntity):
         super().__init__(coordinator)
         self._attr_hvac_modes = [HVACMode.HEAT, HVACMode.AUTO]
         self._attr_preset_modes = [
-            PRESET_AWAY,
-            PRESET_COMFORT,
             PRESET_HOME,
+            PRESET_COMFORT,
             PRESET_SLEEP,
+            PRESET_AWAY,
         ]
         name = f"{config.get(CONF_THERMOSTAT_PREFIX)} thermostat {config.get(CONF_THERMOSTAT_SUFFIX)}".strip()
         self._attr_name = upper_first(name)
